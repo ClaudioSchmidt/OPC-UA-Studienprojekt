@@ -28,10 +28,10 @@ def build_payload() -> bytes:
         True,   # is_running
         False,  # is_reverse
         True,   # switch
-        True,   # start_sensor
+        False,   # start_sensor
         True,   # id_sensor
-        1,      # color_channel
-        False,  # inductive_sensor
+        4,      # color_channel
+        True,  # inductive_sensor
         False,  # switch_sensor
         True    # storage_sensor
     )
@@ -63,8 +63,16 @@ def main():
             sock.sendto(packet1, (MULTICAST_IP, PORT))
 
             # 🔹 Second machine (1002)
-            packet2 = build_uadp_packet(1002, seq)
-            sock.sendto(packet2, (MULTICAST_IP, PORT))
+            #packet2 = build_uadp_packet(1002, seq)
+            #sock.sendto(packet2, (MULTICAST_IP, PORT))
+
+            # 🔹 Third machine (1003)
+            #packet2 = build_uadp_packet(1003, seq)
+            #sock.sendto(packet2, (MULTICAST_IP, PORT))
+
+            # 🔹 Fourth machine (1004)
+            #packet2 = build_uadp_packet(1004, seq)
+            #sock.sendto(packet2, (MULTICAST_IP, PORT))
 
             print(f"[Publisher] Sent packets #{seq} for machines 1001 + 1002")
             seq += 1

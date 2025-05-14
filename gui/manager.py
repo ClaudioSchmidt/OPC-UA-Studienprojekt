@@ -3,12 +3,14 @@
 import sys
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel,
-    QHBoxLayout, QScrollArea
+    QHBoxLayout, QScrollArea, QGridLayout
 )
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt, QObject, Signal
 
-from gui.widget_machine import MachineWidget
+from gui.widgets.widget_machine import MachineWidget
+from gui.widgets.widget_device_grid import DeviceGrid
+from gui.machine_animator import MachineAnimator
 
 # ------------------------------
 # THREADING ERROR EXPLANATION:
@@ -40,6 +42,9 @@ class GUIManager(QObject):
 
         self.setup_window()
         self.setup_layout()
+
+        self.animator = MachineAnimator(self, fps=20)
+        self.animator.start()
 
         # Connect signal to slot
         self.machine_update_signal.connect(self._handle_machine_update)
@@ -85,9 +90,12 @@ class GUIManager(QObject):
         self.scroll_area.setWidgetResizable(True)
 
         container = QWidget()
-        self.machine_layout = QVBoxLayout(container)
-        container.setLayout(self.machine_layout)
+        layout = QVBoxLayout(container)
 
+        self.device_grid = DeviceGrid(aspect_ratio=3/2)
+        layout.addWidget(self.device_grid)
+
+        container.setLayout(layout)
         self.scroll_area.setWidget(container)
         return self.scroll_area
 
@@ -101,6 +109,20 @@ class GUIManager(QObject):
         layout.addWidget(info_label)
 
         return footer
+    
+    def rebuild_grid(self):
+        row_size = 3
+        widgets = list(self.machine_widgets.values())
+
+        for i in reversed(range(self.machine_layout.count())):
+            item = self.machine_layout.itemAt(i)
+            if item.widget():
+                item.widget().setParent(None)
+
+        for index, widget in enumerate(widgets):
+            row = index // row_size
+            col = index % row_size
+            self.machine_layout.addWidget(widget, row, col)
 
     # Callback function for MachineRegistry
     # This is called from the worker thread
@@ -112,15 +134,15 @@ class GUIManager(QObject):
         machine_id = machine.machine_id
 
         if is_new:
-            widget = MachineWidget(machine)
+            widget = MachineWidget(machine, aspect_ratio=3/2)
             self.machine_widgets[machine_id] = widget
-            self.machine_layout.addWidget(widget)
-            print(f"[GUI] Machine added: {machine_id}")
         else:
             widget = self.machine_widgets.get(machine_id)
             if widget:
                 widget.update_components(machine)
-                print(f"[GUI] Machine updated: {machine_id}")
+
+        all_panels = list(self.machine_widgets.values())
+        self.device_grid.set_panels(all_panels)
 
     def show(self):
         self.window.show()
