@@ -1,11 +1,16 @@
 from model import Machine, SlideBuffer, ButtonState
 from model import LedStateEnum
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Callable, List
 
 class MachineRegistry:
     def __init__(self):
         # Dictionary to hold machine instances, keyed by machine_id
         self._machines: Dict[int, Machine] = {}
+        # List to hold callback functions for machines
+        self._callbacks: List[Callable[[Machine, bool], None]] = []  
+
+    def register_callback(self, callback: Callable[[Machine], None]):
+        self._callbacks.append(callback)
 
     def _add_machine(self, machine_id: int, data: Dict[str, Any]) -> Machine:
         """
@@ -57,11 +62,18 @@ class MachineRegistry:
     
     def update_machine(self, machine_id: int, data: Dict[str, Any]) -> None:
         if machine_id not in self._machines:
-            self._machines[machine_id] = self._add_machine(machine_id, data)
+            machine = self._add_machine(machine_id, data)
+            self._machines[machine_id] = machine
+            for callback in self._callbacks:
+                callback(machine, True)  # notify new machine
+                #print(f"[Registry] New machine added: {machine_id}")
         else:
             machine = self._machines[machine_id]
             for key, value in data.items():
                 setattr(machine, key, value)
+            for callback in self._callbacks:
+                callback(machine, False)  # notify updated machine
+                #print(f"[Registry] Machine updated: {machine_id}")
 
     def get_machine(self, machine_id: int) -> Optional[Machine]:
         return self._machines.get(machine_id)

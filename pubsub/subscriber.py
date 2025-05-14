@@ -5,13 +5,13 @@ from .decoder import Decoder
 from .registry import MachineRegistry
 
 class SubscriberClient:
-    def __init__(self, multicast_ip: str, port: int, local_ip: str):
+    def __init__(self, registry, multicast_ip: str, port: int, local_ip: str):
         self.multicast_ip = multicast_ip
         self.port = port
         self.local_ip = local_ip
 
         self. decoder = Decoder()
-        self.registry = MachineRegistry()
+        self.registry = registry
 
         self._running = False
         self._thread: Optional[threading.Thread] = None
