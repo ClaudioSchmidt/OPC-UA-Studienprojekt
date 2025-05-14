@@ -5,6 +5,8 @@ from PySide6.QtGui import QPainter, QColor, QPen
 from gui.widgets.components.static_background import StaticBackgroundComponent
 from gui.widgets.components.sensor import SensorComponent, SensorHighlightComponent
 from gui.widgets.components.belt import CachedBeltComponent
+from gui.widgets.components.switch import ArmComponent
+from gui.widgets.components.button import LampButtonComponent
 
 class MachineVisualizationCanvas(QWidget):
     def __init__(self, grid_width, grid_height, parent=None):
@@ -49,16 +51,16 @@ class MachineVisualizationCanvas(QWidget):
             component.draw(painter, cell_size)
 
         # draw grid lines on top
-        pen = QPen(QColor(200, 200, 200), 1)
-        painter.setPen(pen)
+        #pen = QPen(QColor(200, 200, 200), 1)
+        #painter.setPen(pen)
 
-        for x in range(grid_cols + 1):
-            x_pos = x * cell_size
-            painter.drawLine(x_pos, 0, x_pos, total_grid_height)
+        #for x in range(grid_cols + 1):
+        #    x_pos = x * cell_size
+        #    painter.drawLine(x_pos, 0, x_pos, total_grid_height)
 
-        for y in range(grid_rows + 1):
-            y_pos = y * cell_size
-            painter.drawLine(0, y_pos, total_grid_width, y_pos)
+        #for y in range(grid_rows + 1):
+        #    y_pos = y * cell_size
+        #    painter.drawLine(0, y_pos, total_grid_width, y_pos)
 
         painter.end()
 
@@ -113,6 +115,64 @@ class MachineWidget(QWidget):
             image_path="gui/assets/belt_segment.png"
         )
         self.components.append(belt)
+
+        arm = ArmComponent(
+            grid_x=3,
+            grid_y=0.5,
+            logical_width=4,
+            logical_height=1,
+            image_path="gui/assets/sorting_arm.png",
+            pivot_offset=(0.875, 0.4),
+            sensor_name="switch",
+            open_angle=0,
+            closed_angle=-45
+        )
+        self.components.append(arm)
+
+        app_lamp = LampButtonComponent(
+            grid_x=7.5,
+            grid_y=13,
+            logical_width=2,
+            logical_height=2,
+            image_paths={
+                "off": "gui/assets/button_app_off.png",
+                "off_pressed": "gui/assets/button_app_off_pressed.png",
+                "on": "gui/assets/button_app_on.png",
+                "on_pressed": "gui/assets/button_app_on_pressed.png"
+            },
+            button_attr="app_button"
+        )
+        self.components.append(app_lamp)
+
+        process_lamp = LampButtonComponent(
+            grid_x=10.5,
+            grid_y=13,
+            logical_width=2,
+            logical_height=2,
+            image_paths={
+                "off": "gui/assets/button_process_off.png",
+                "off_pressed": "gui/assets/button_process_off_pressed.png",
+                "on": "gui/assets/button_process_on.png",
+                "on_pressed": "gui/assets/button_process_on_pressed.png"
+            },
+            button_attr="process_button"
+        )
+        self.components.append(process_lamp)
+
+        faultack_lamp = LampButtonComponent(
+            grid_x=13.5,
+            grid_y=13,
+            logical_width=2,
+            logical_height=2,
+            image_paths={
+                "off": "gui/assets/button_faultack_off.png",
+                "off_pressed": "gui/assets/button_faultack_off_pressed.png",
+                "on": "gui/assets/button_faultack_on.png",
+                "on_pressed": "gui/assets/button_faultack_on_pressed.png"
+            },
+            button_attr="fault_ack_button"
+        )
+        self.components.append(faultack_lamp)
 
         start_sensor = SensorComponent(
             grid_x=14,
