@@ -1,5 +1,9 @@
-import time, socket
-from pubsub import SubscriberClient
+import time
+import socket
+from pubsub.subscriber import SubscriberClient
+from pubsub.registry import MachineRegistry
+from flaskserver.server import FlaskServer
+from flaskserver.sessionmanager import SessionManager
 
 def get_local_ip() -> str:
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -10,23 +14,32 @@ def get_local_ip() -> str:
         s.close()
     return ip
 
-if __name__ == "__main__":
-    multicast_ip = "239.0.0.1"
-    port = 4840
-    local_ip = get_local_ip()
+def main():
+    registry = MachineRegistry()
+    sessions = SessionManager()
 
-    subscriber = SubscriberClient(multicast_ip, port, local_ip)
+    subscriber = SubscriberClient(
+        multicast_ip="239.0.0.1",
+        port=4840,
+        local_ip=get_local_ip()
+    )
+    subscriber.registry = registry
+
+    flask_server = FlaskServer(
+        registry=registry,
+        session_manager=sessions
+    )
+
     subscriber.start_listening()
+    flask_server.run()
 
     try:
-        time.sleep(10)
+        while True:
+            time.sleep(1)
     except KeyboardInterrupt:
-        print("\n[Main] Interrupted by user.")
-    
-    print("[Main] Stopping subscriber...")
-    subscriber.stop_listening()
+        print("\n[Main] Shutting down...")
+        subscriber.stop_listening()
+        print("[Main] Sessions saved.")
 
-    print("[Main] Final machine states:")
-    for machine in subscriber.registry.get_all_machines():
-        print(machine)
-
+if __name__ == "__main__":
+    main()

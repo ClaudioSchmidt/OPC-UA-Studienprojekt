@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assign Lab Group</title>
+    {% if error_msg == "assigned" %}
+        <p style="color: red; font-weight: bold;">This machine has already been assigned. Please select another one.</p>
+    {% endif %}
+    <script>
+        function addMember() {
+            let div = document.getElementById("members");
+            let input = document.createElement("input");
+            input.type = "text";
+            input.name = "members";
+            input.placeholder = "Member name";
+            div.appendChild(document.createElement("br"));
+            div.appendChild(input);
+        }
+    </script>
+</head>
+<body>
+    <h1>Assign Lab Group</h1>
+    <form method="POST">
+        Group Letter:
+        <select name="group_letter" required>
+            {% for letter in ['A','B','C','D','E','F'] %}
+                {% if letter in used_letters %}
+                    <option value="{{ letter }}" disabled>{{ letter }} (Assigned)</option>
+                {% else %}
+                    <option value="{{ letter }}">{{ letter }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+
+        <div id="members">
+            Member: <input type="text" name="members" required>
+        </div>
+        <button type="button" onclick="addMember()">+ Add Member</button><br><br>
+
+        Machine:
+        <select name="machine_id" required>
+            {% for machine in machines %}
+                {% if machine.assigned_lab_group %}
+                    <option disabled>{{ machine.machine_id }} (Group {{ machine.assigned_lab_group.group_letter }})</option>
+                {% else %}
+                    <option value="{{ machine.machine_id }}">{{ machine.machine_id }}</option>
+                {% endif %}
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Assign Group</button>
+    </form>
+</body>
+</html>

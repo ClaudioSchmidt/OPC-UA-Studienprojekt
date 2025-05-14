@@ -36,14 +36,14 @@ def build_payload() -> bytes:
         True    # storage_sensor
     )
 
-def build_uadp_packet(seq_num: int) -> bytes:
+def build_uadp_packet(publisher_id: int, seq_num: int) -> bytes:
     header = bytearray()
     version = 1
     flags = 0x03
     version_flags = (version << 4) | flags
     header.append(version_flags)
 
-    header += struct.pack("<H", PUBLISHER_ID)
+    header += struct.pack("<H", publisher_id)
     header += struct.pack("<I", seq_num)
 
     payload = build_payload()
@@ -53,14 +53,20 @@ def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
 
-    print("[Publisher] Sending packets...")
+    print("[Publisher] Sending packets for 2 machines...")
 
     seq = SEQUENCE_NUMBER
     try:
         while True:
-            packet = build_uadp_packet(seq)
-            sock.sendto(packet, (MULTICAST_IP, PORT))
-            print(f"[Publisher] Sent packet #{seq}")
+            # 🔹 First machine (1001)
+            packet1 = build_uadp_packet(1001, seq)
+            sock.sendto(packet1, (MULTICAST_IP, PORT))
+
+            # 🔹 Second machine (1002)
+            packet2 = build_uadp_packet(1002, seq)
+            sock.sendto(packet2, (MULTICAST_IP, PORT))
+
+            print(f"[Publisher] Sent packets #{seq} for machines 1001 + 1002")
             seq += 1
             time.sleep(1)
     except KeyboardInterrupt:
