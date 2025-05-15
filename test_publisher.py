@@ -16,24 +16,24 @@ def build_payload() -> bytes:
         2,      # sorting_criterion
         5,      # workpiece_counter_slide_a
         7,      # workpiece_counter_slide_b
-        False,  # app_btn
+        True,  # app_btn
         1,      # app_led
-        False,  # process_btn
+        True,  # process_btn
         2,      # process_led
-        False,   # fault_ack_btn
+        True,   # fault_ack_btn
         3,      # fault_ack_led
         False,  # emergency_btn
         1.25,   # belt_speed
         2,      # belt_speed_level
         True,   # is_running
         False,  # is_reverse
-        True,   # switch
-        True,   # start_sensor
-        True,   # id_sensor
-        2,      # color_channel
+        False,   # switch
+        False,   # start_sensor
+        False,   # id_sensor
+        1,      # color_channel
         True,  # inductive_sensor
-        True,  # switch_sensor
-        True    # storage_sensor
+        False,  # switch_sensor
+        False    # storage_sensor
     )
 
 def build_uadp_packet(publisher_id: int, seq_num: int) -> bytes:

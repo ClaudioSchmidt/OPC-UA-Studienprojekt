@@ -8,6 +8,16 @@ class MachineRegistry:
         self._machines: Dict[int, Machine] = {}
         # List to hold callback functions for machines
         self._callbacks: List[Callable[[Machine, bool], None]] = []  
+        # Mapping of button states to their corresponding attributes, beacuse I still want to avoid
+        # hardcoding pressed satte and led pattern for each button
+        self.button_mapping = {
+            "app_btn": ("app_button", "is_pressed"),
+            "app_led": ("app_button", "led_pattern"),
+            "process_btn": ("process_button", "is_pressed"),
+            "process_led": ("process_button", "led_pattern"),
+            "fault_ack_btn": ("fault_ack_button", "is_pressed"),
+            "fault_ack_led": ("fault_ack_button", "led_pattern"),
+        }
 
     def register_callback(self, callback: Callable[[Machine], None]):
         self._callbacks.append(callback)
@@ -59,7 +69,9 @@ class MachineRegistry:
             storage_sensor=data["storage_sensor"],
             assigned_lab_group=None
         )
-    
+
+
+
     def update_machine(self, machine_id: int, data: Dict[str, Any]) -> None:
         if machine_id not in self._machines:
             machine = self._add_machine(machine_id, data)
@@ -70,7 +82,13 @@ class MachineRegistry:
         else:
             machine = self._machines[machine_id]
             for key, value in data.items():
-                setattr(machine, key, value)
+                # check if key belongs to button_mapping, so we can set the button state correctly
+                if key in self.button_mapping:
+                    button_obj_name, button_attr = self.button_mapping[key]
+                    button_obj = getattr(machine, button_obj_name)
+                    setattr(button_obj, button_attr, value)
+                else:
+                    setattr(machine, key, value)
             for callback in self._callbacks:
                 callback(machine, False)  # notify updated machine
                 #print(f"[Registry] Machine updated: {machine_id}")
