@@ -60,7 +60,6 @@ class MainStateEnum(IntEnum):
     REMOTE_CONTROL = 3
     PROCESS_DISABLED = 4
     PROCESS_ENABLED = 5
-    APP_CLOSED = 6
 
 class SubStateEnum(IntEnum):
     NONE_SUB_STATE = 0
