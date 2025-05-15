@@ -1,5 +1,3 @@
-# gui/manager.py
-
 import sys
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel,
@@ -10,7 +8,7 @@ from PySide6.QtCore import Qt, QObject, Signal
 
 from gui.widgets.widget_machine import MachineWidget
 from gui.widgets.widget_device_grid import DeviceGrid
-from gui.machine_animator import MachineAnimator
+from gui.utils.machine_animator import MachineAnimator
 
 # ------------------------------
 # THREADING ERROR EXPLANATION:
