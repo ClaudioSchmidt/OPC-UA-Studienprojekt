@@ -87,7 +87,7 @@ class SubStateEnum(IntEnum):
 def encode_machine_state(main_state: MainStateEnum, sub_state: SubStateEnum) -> int:
     # <<: shifts bits to the left by 4 positions
     # |: bitwise OR operation
-    return (main_state.value << 4) | sub_state.value
+    return (main_state << 4) | sub_state
 
 def decode_machine_state(byte_value: int) -> tuple[MainStateEnum, SubStateEnum]:
     main_state_value = byte_value >> 4 # Shift right by 4 to get the main state
