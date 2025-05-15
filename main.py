@@ -42,9 +42,7 @@ def main():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\n[Main] Shutting down...")
         subscriber.stop_listening()
-        print("[Main] Sessions saved.")
 
 if __name__ == "__main__":
     main()

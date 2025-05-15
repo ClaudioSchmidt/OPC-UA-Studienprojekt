@@ -1,25 +1,25 @@
 from enum import IntEnum
 
-class SurfaceEnum(IntEnum):
+class SURFACE_ENUM(IntEnum):
     UNDEFINED = 0
     BLACKSURFACE = 1
     REDSURFACE = 2
     METALLICSURFACE = 3
 
-class LedStateEnum(IntEnum):
+class LED_STATE_ENUM(IntEnum):
     OFF = 0
     ON = 1
     BLINKING = 2
     SLOWBLINKING = 3
 
-class LabProgressEnum(IntEnum):
+class LAB_PROGRESS_ENUM(IntEnum):
     PART1 = 0
     PART2 = 1
     PART3 = 2
     PART4 = 3
     FINISHED = 4
 
-class StatusCodeEnum(IntEnum):
+class STATUS_CODE_ENUM(IntEnum):
 
     INITIALIZATION_WAITING = 100
     INITIALIZATION_FAULT = 101
@@ -53,43 +53,43 @@ class StatusCodeEnum(IntEnum):
     OK = 201
     ERROR = 202
 
-class MainState(IntEnum):
-    AppStart = 0
-    AppFault = 1
-    EmergencyStop = 2
-    RemoteControl = 3
-    ProcessDisabled = 4
-    ProcessEnabled = 5
-    AppClosed = 6
+class MAIN_STATE(IntEnum):
+    APP_START = 0
+    APP_FAULT = 1
+    EMERGENCY_STOP = 2
+    REMOTE_CONTROL = 3
+    PROCESS_DISABLED = 4
+    PROCESS_ENABLED = 5
+    APP_CLOSED = 6
 
-class SubState(IntEnum):
-    NoneState = 0
+class SUB_STATE(IntEnum):
+    NONE_SUB_STATE = 0
 
     # ProcessDisabled substates
-    Idle = 1
-    Initializing = 2
-    Active = 3
-    TeachingEnabled = 4
-    TeachingWaitingForIdSensor = 5
-    TeachingProgramColorSensor = 6
-    TeachingWaitingForStorageSensor = 7
+    IDLE = 1
+    INITIALIZING = 2
+    ACTIVE = 3
+    TEACHING_ENABLED = 4
+    TEACHING_WAITING_FOR_ID_SENSOR = 5
+    TEACHING_PROGRAM_COLOR_SENSOR = 6
+    TEACHING_WAITING_FOR_STORAGE_SENSOR = 7
 
     # ProcessEnabled substates
-    Waiting = 8
-    SortingWaitingForIdSensor = 9
-    SortingIdentification = 10
-    SortingWaitingForStorageSensor = 11
-    SortingWaitingForSwitchSensor = 12
-    Halted = 13
-    ProcessFault = 14
-    StorageFull = 15
+    WAITING = 8
+    SORTING_WAITING_FOR_ID_SENSOR = 9
+    SORTING_IDENTIFICATION = 10
+    SORTING_WAITING_FOR_STORAGE_SENSOR = 11
+    SORTING_WAITING_FOR_SWITCH_SENSOR = 12
+    HALTED = 13
+    PROCESS_FAULT = 14
+    STORAGE_FULL = 15
 
-def encode_machine_state(main_state: MainState, sub_state: SubState) -> int:
+def encode_machine_state(main_state: MAIN_STATE, sub_state: SUB_STATE) -> int:
     # <<: shifts bits to the left by 4 positions
     # |: bitwise OR operation
     return (main_state.value << 4) | sub_state.value
 
-def decode_machine_state(byte_value: int) -> tuple[MainState, SubState]:
+def decode_machine_state(byte_value: int) -> tuple[MAIN_STATE, SUB_STATE]:
     main_state_value = byte_value >> 4 # Shift right by 4 to get the main state
     sub_state_value = byte_value & 0x0F  # Mask to get the last 4 bits
-    return MainState(main_state_value), SubState(sub_state_value)
+    return MAIN_STATE(main_state_value), SUB_STATE(sub_state_value)
