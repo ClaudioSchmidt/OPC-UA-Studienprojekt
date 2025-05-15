@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 from .enum import (SurfaceEnum, LedStateEnum, StatusCodeEnum, LabProgressEnum,
-                    MainState, SubState, decode_machine_state)
+                    MainStateEnum, SubStateEnum, decode_machine_state)
 
 @dataclass
 class ButtonState:
@@ -56,5 +56,5 @@ class Machine:
     storage_sensor: bool
     assigned_lab_group: Optional[LabGroup] = None
 
-    def get_machine_states(self) -> tuple[MainState, SubState]:
+    def get_machine_states(self) -> tuple[MainStateEnum, SubStateEnum]:
         return decode_machine_state(self.sorting_state)

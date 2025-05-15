@@ -1,25 +1,25 @@
 from enum import IntEnum
 
-class SURFACE_ENUM(IntEnum):
+class SurfaceEnum(IntEnum):
     UNDEFINED = 0
     BLACKSURFACE = 1
     REDSURFACE = 2
     METALLICSURFACE = 3
 
-class LED_STATE_ENUM(IntEnum):
+class LedStateEnum(IntEnum):
     OFF = 0
     ON = 1
     BLINKING = 2
     SLOWBLINKING = 3
 
-class LAB_PROGRESS_ENUM(IntEnum):
+class LabProgressEnum(IntEnum):
     PART1 = 0
     PART2 = 1
     PART3 = 2
     PART4 = 3
     FINISHED = 4
 
-class STATUS_CODE_ENUM(IntEnum):
+class StatusCodeEnum(IntEnum):
 
     INITIALIZATION_WAITING = 100
     INITIALIZATION_FAULT = 101
@@ -53,7 +53,7 @@ class STATUS_CODE_ENUM(IntEnum):
     OK = 201
     ERROR = 202
 
-class MAIN_STATE(IntEnum):
+class MainStateEnum(IntEnum):
     APP_START = 0
     APP_FAULT = 1
     EMERGENCY_STOP = 2
@@ -62,7 +62,7 @@ class MAIN_STATE(IntEnum):
     PROCESS_ENABLED = 5
     APP_CLOSED = 6
 
-class SUB_STATE(IntEnum):
+class SubStateEnum(IntEnum):
     NONE_SUB_STATE = 0
 
     # ProcessDisabled substates
@@ -84,12 +84,12 @@ class SUB_STATE(IntEnum):
     PROCESS_FAULT = 14
     STORAGE_FULL = 15
 
-def encode_machine_state(main_state: MAIN_STATE, sub_state: SUB_STATE) -> int:
+def encode_machine_state(main_state: MainStateEnum, sub_state: SubStateEnum) -> int:
     # <<: shifts bits to the left by 4 positions
     # |: bitwise OR operation
     return (main_state.value << 4) | sub_state.value
 
-def decode_machine_state(byte_value: int) -> tuple[MAIN_STATE, SUB_STATE]:
+def decode_machine_state(byte_value: int) -> tuple[MainStateEnum, SubStateEnum]:
     main_state_value = byte_value >> 4 # Shift right by 4 to get the main state
     sub_state_value = byte_value & 0x0F  # Mask to get the last 4 bits
-    return MAIN_STATE(main_state_value), SUB_STATE(sub_state_value)
+    return MainStateEnum(main_state_value), SubStateEnum(sub_state_value)
